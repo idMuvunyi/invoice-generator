@@ -23,13 +23,7 @@ export default class NavBar extends Component{
           <Link to="/invoice" className="nav-link"> New Invoice
             </Link>
           </li>
-          <li className="nav-item">
-          <Link to="/history" className="nav-link"> Your history
-                  </Link>
-            </li>
-         
-            
-         
+        
         </ul>
         
       </div>

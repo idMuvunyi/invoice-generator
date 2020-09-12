@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ReactToPrint from 'react-to-print';
 
 
 
@@ -13,12 +14,7 @@ export default class CreateInvoice extends Component{
     this.onChangeTo = this.onChangeTo.bind(this);
     this.onChangeDate = this.onChangeDate.bind(this);
     this.onChangePaymentMode = this.onChangePaymentMode.bind(this);
-    this.onChangeItemNameOne = this.onChangeItemNameOne.bind(this);
-    this.changeItemQuantiy = this.changeItemQuantiy.bind(this);
-    this.onChangeItemCostOne = this.onChangeItemCostOne.bind(this);
-    this.onChangeItemAmountOne = this.onChangeItemAmountOne.bind(this);
     this.onChangeDueDate = this.onChangeDueDate.bind(this);
-    this.onChangeSubTotal = this.onChangeSubTotal.bind(this);
     this.onChangeTax = this.onChangeTax.bind(this);
     this.onChangeTotal = this.onChangeTotal.bind(this);
     this.onChangePaidAmount = this.onChangePaidAmount.bind(this);
@@ -38,18 +34,15 @@ export default class CreateInvoice extends Component{
       itemQuantityOne: 0,
       itemCostOne: 0,
       itemAmountOne: 0,
+      listItem:[],
       
-      //itemNameTwo:'',
-      //itemQuantityTwo:'',
-      //itemCostTwo: '',
-      //itemAmountTwo:'',
       
       //last part payment states
-      subTotal: '',
+      subTotal: 0,
       tax: 0,
-      total: '',
+      total: 0,
       amountPaid: 0,
-      balanceDue: ''
+      balanceDue: 0
       
       
        
@@ -95,53 +88,15 @@ export default class CreateInvoice extends Component{
       })
     }
   
-    // second part events
-    onChangeItemNameOne(e){
-      
-      this.setState({
-        itemNameOne: e.target.value,
-      })
     
-    }
-    
-    changeItemQuantiy(e){
-      
-      this.setState({
-        itemQuantityOne: e.target.value,
-      })
-    
-    }
-    
-    onChangeItemCostOne(e){
-      
-      this.setState({
-        itemCostOne: e.target.value,
-      })
-    
-    }
-    
-    onChangeItemAmountOne(e){
-      
-      this.setState({
-        itemAmountOne: e.target.value,
-      })
-    
-    }
-    
-   
     
     // third part events
     
-    onChangeSubTotal(e){
-      this.setState({
-        subTotal: e.target.value,
-      })
-    }
-    
+  
     onChangeTax(e){
       this.setState({
         tax: e.target.value,
-        //total: ((this.state.itemQuantityOne) * (this.state.itemCostOne))  * this.state.tax/100  
+          
       })
     }
     
@@ -162,41 +117,151 @@ export default class CreateInvoice extends Component{
         })
       }
       
-      // submit form to the database
+     
     
-  onSubmit(e){
-  e.preventDefault();  
-  
-  const invoiceDetails = {
-    // first part states updated
-    invoiceNumber: this.state.invoiceNumber,
-    invoiceFrom: this.state.invoiceFrom,
-    billTo: this.state.billTo,
-    date: this.state.date,
-    paymentMode: this.state.paymentMode,
-    dueDate: this.state.dueDate,
-    
-    //second states
-    itemNameOne: this.state.itemNameOne,
-    itemQuantityOne: this.state.itemQuantityOne,
-    itemCostOne: this.state.itemCostOne,
-    itemAmountOne: this.state.itemAmountOne,
+ 
+  updateName(key, value){
+    this.setState({
+      [key]: value,
       
-  
-   
-    //last part payment states updated
-    subTotal: this.state.subTotal,
-    tax: this.state.tax,
-    total: this.state.total,
-    amountPaid: this.state.amountPaid,
-    balanceDue: this.state.balanceDue
-  };
-  
-  console.log(invoiceDetails)
+    });
   }
+   
+  updateQuantity(key, value){
+    this.setState({
+      [key]:value,
+    })
+  }
+  
+  updateCost(key, value){
+    this.setState({
+      [key]:value,
+    })
+  }
+  
+  
+  
+  addItem(){
+    
+    if(this.state.itemQuantityOne === 0 || this.state.itemCostOne === 0 || this.state.itemNameOne === ''){
+      return alert('Fill all product details !')
+    }
+    else{
+    const amountItem = this.state.itemQuantityOne.slice() * this.state.itemCostOne.slice();
+    const newItems={
+      id: 1 + Math.random(),
+      value: [this.state.itemNameOne.slice(), this.state.itemQuantityOne.slice(),
+                this.state.itemCostOne.slice(), amountItem ]
+     
+    };
+  
+    const list =[...this.state.listItem];
+    list.push(newItems);
+    
+    
+    this.setState({
+      listItem: list,
+      itemNameOne: '',
+      itemQuantityOne: '',
+      itemCostOne: '',
+      itemAmountOne: '',
+     
+     
+    })
+    
+    console.log(list);
+  }
+  }
+  
+  deleteItem(id){
+    const list = [...this.state.listItem];
+    const updatedList = list.filter(item => item.id !== id);
+    
+    this.setState({
+      listItem: updatedList,
+    })
+  }
+  
+  
+  
+  onSubmit(e){
+    e.preventDefault();  
+    
+   // const niceInvoice = require("nice-invoice");
+   
+    //code
+const invoiceDetail = {
+  shipping: {
+    name: "Micheal",
+    address: "1234 Main Street",
+    city: "Dubai",
+    state: "Dubai",
+    country: "UAE",
+    postal_code: 94111
+  },
+  items: [
+    {
+      item: "Chair",
+      description: "Wooden chair",
+      quantity: 1,
+      price: 50.00, 
+      tax: "10%"
+    },
+    {
+      item: "Watch",
+      description: "Wall watch for office",
+      quantity: 2,
+      price: 30.00,
+      tax: "10%"
+    },
+    {
+      item: "Water Glass Set",
+      description: "Water glass set for office",
+      quantity: 1,
+      price: 35.00,
+      tax: ""
+    }
+  ],
+  subtotal: 156,
+  total: 156,
+  order_number: 1234222,
+  header:{
+      company_name: "Cyberncode",
+      company_logo: "logo.png",
+      company_address: "Nice Invoice. 123 William Street 1th Floor New York, NY 123456"
+  },
+  footer:{
+    text: "Copyright"
+  },
+  currency_symbol:"$", 
+  date: {
+    billing_date: "08 August 2020",
+    due_date: "10 September 2020",
+  }
+};
+    
 
+    
+    }
+  
+  
   
   render(){
+    
+    const amounts = this.state.listItem.map( transaction => transaction.value[3]);      
+    const subt = amounts.reduce((acc, item) => (acc += item), 0).toFixed(0);
+    
+    // tax calc
+    const taxes = (this.state.tax / 100) * subt;
+    const arr = [subt, taxes];
+    const getSum = (totals, num) =>{
+      return totals + Math.round(num);
+    }
+
+    const tax = arr.reduce(getSum, 0);
+    
+    //
+ 
     return(
      <div>
          <h3>Create new invoice</h3>
@@ -208,6 +273,7 @@ export default class CreateInvoice extends Component{
                <div className="col-md-6">
                  <label>Invoice Number: </label>
                  <input type="number"
+                        required
                         className="form-control"
                         value={this.state.invoiceNumber}
                         onChange={this.onChangeNumber}/>
@@ -216,6 +282,7 @@ export default class CreateInvoice extends Component{
                <div className="col-md-6">
                  <label>Invoice From: </label>
                  <input type="text"
+                        required
                         className="form-control"
                         value={this.state.invoiceFrom}
                         onChange={this.onChangeFrom}/>
@@ -223,6 +290,7 @@ export default class CreateInvoice extends Component{
                <div className="col-md-6">
                  <label>Bill To: </label>
                  <input type="text"
+                        required
                         className="form-control"
                         value={this.state.billTo}
                         onChange={this.onChangeTo}/>
@@ -239,6 +307,7 @@ export default class CreateInvoice extends Component{
                <div className="col-md-6">
                  <label>Payment Mode: </label>
                  <input type="text"
+                        required
                         className="form-control"
                         value={this.state.paymentMode}
                         onChange={this.onChangePaymentMode}/>
@@ -266,27 +335,30 @@ export default class CreateInvoice extends Component{
                <div className="col-md-5">
                  <label>Name of product / service: </label>
                  <input type="text"
+                        
                         className="form-control"
                         value={this.state.itemNameOne}
-                        onChange={this.onChangeItemNameOne}
+                        onChange={e => this.updateName("itemNameOne", e.target.value)}
                        
                         />
                </div>
                <div className="col-md-2">
                  <label>Quantity: </label>
                  <input type="number"
+                        
                         className="form-control"
                         value={this.state.itemQuantityOne}
-                        onChange={this.changeItemQuantiy}
+                        onChange={e => this.updateQuantity("itemQuantityOne", e.target.value)}
                        />
                </div>
                
                <div className="col-md-2">
-                 <label>cost: </label>
+                 <label>Unit cost: </label>
                  <input type="number"
+                        
                         className="form-control"
                         value={this.state.itemCostOne}
-                        onChange={this.onChangeItemCostOne}
+                        onChange={e => this.updateCost("itemCostOne", e.target.value)}
                         />
                </div>
                
@@ -296,8 +368,7 @@ export default class CreateInvoice extends Component{
                         className="form-control"
                         readOnly
                        value={(this.state.itemQuantityOne) * (this.state.itemCostOne) }
-                       onClick={this.onChangeItemAmountOne}
-                       
+                      
                         />
                </div>
                
@@ -307,13 +378,48 @@ export default class CreateInvoice extends Component{
                <br/>
                <div className="row">
                  <div className="col-md-3">
-                <button  onClick={() => this.handleAddFields()} className="btn btn-info btn-sm"> <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" className="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <div onClick={() => this.addItem()} className="btn btn-info btn-sm"> <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" className="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                  <path fillRule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                 </svg> new Item</button>
+                 </svg> Add Item</div>
                </div>
                </div>
+               
                <br/>
- 
+               <table className="table table-striped table-responsive table-sm ">
+                 <thead className="bg-secondary text-white">
+                 <tr>
+                    
+                    <td>Product / service Name</td>
+                    <td>Quantity</td>
+                    <td>Cost</td>
+                    <td>Amount</td>
+                    <td>Action</td>
+                 </tr>
+        </thead>
+        <tbody>
+                 {this.state.listItem.map(item => {
+                   return(
+                    <tr  key={item.id}>
+                     
+                     <td>{item.value[0]}</td>
+                     <td>{item.value[1]}</td>
+                     <td> RWF. {item.value[2]}</td>
+                     <td>RWF. {item.value[3]}</td>
+                     <td onClick={() => this.deleteItem(item.id)}
+                       > <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                       <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                     </svg></td>
+                     </tr>
+                   );
+                 })}
+               
+               </tbody>
+               </table>
+               <br/>
+               <br/>
+               <br/>
+               <br/> 
                <br/>
                <nav aria-label="breadcrumb" className="bg-info">
                <ol className="breadcrumb bg-info">
@@ -323,14 +429,20 @@ export default class CreateInvoice extends Component{
                <br/>
               <div className="row">
                <div className="col-md-2">
-                 <p>Sub-total:</p>
-                 <p>RWF. {(this.state.itemQuantityOne) * (this.state.itemCostOne)}</p>
+               <p>Sub-total:</p>
+                
+                <p>RWF. {subt}</p>
+                
+                 
+                
                  <br/>
                </div>
                
                <div className="col-md-2">
                  <label>Tax (%) </label>
                  <input type="number"
+                        required
+                        min="1"
                         className="form-control"
                         value={this.state.tax}
                         onChange={this.onChangeTax}/>
@@ -340,13 +452,16 @@ export default class CreateInvoice extends Component{
                
                <div className="col-md-3">
                <p>Total:</p>
-                 <p>RWF. {((this.state.itemQuantityOne) * (this.state.itemCostOne)) }</p>
+                 <p>RWF. { tax }</p>
+                 
+                 
                  <br/>
                </div>
                
                <div className="col-md-2">
                  <label>Amount paid: </label>
                  <input type="number"
+                        required
                         className="form-control"
                         value={this.state.amountPaid}
                         onChange={this.onChangePaidAmount}/>
@@ -355,14 +470,14 @@ export default class CreateInvoice extends Component{
                
                <div className="col-md-3">
                <p>Balance Due:</p>
-                 <p>RWF. {((this.state.itemQuantityOne) * (this.state.itemCostOne)) - (this.state.amountPaid)}</p>
+                 <p>RWF. {(tax) - Math.abs(this.state.amountPaid)}</p>
                </div>
                
                </div>
-               <button className="btn btn-outline-primary"> <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-receipt-cutoff" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path fillRule="evenodd" d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v13h-1V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51L2 2.118V15H1V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zM0 15.5a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z"/>
-  <path fillRule="evenodd" d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-8a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
-</svg> Generate Invoice</button>
+               <button className="btn btn-outline-primary"> <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fillRule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+  <path fillRule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+</svg> Download Invoice</button>
              
                </form>
                <br/>
@@ -370,6 +485,24 @@ export default class CreateInvoice extends Component{
              </div>
            
    
+    );
+  }
+}
+
+class Example extends Component {
+  render() {
+    return (
+      <div>
+        <ReactToPrint
+          trigger={() => {
+            // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+            // to the root node of the returned component as it will be overwritten.
+            return <a href="#">Print this out!</a>;
+          }}
+          content={() => this.componentRef}
+        />
+        <CreateInvoice ref={el => (this.componentRef = el)} />
+      </div>
     );
   }
 }
