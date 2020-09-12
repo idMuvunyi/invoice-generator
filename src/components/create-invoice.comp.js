@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import ReactToPrint from 'react-to-print';
+//import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 
 
 
@@ -15,6 +16,7 @@ export default class CreateInvoice extends Component{
     this.onChangeDate = this.onChangeDate.bind(this);
     this.onChangePaymentMode = this.onChangePaymentMode.bind(this);
     this.onChangeDueDate = this.onChangeDueDate.bind(this);
+    this.onChangeSubTotal = this.onChangeSubTotal.bind(this);
     this.onChangeTax = this.onChangeTax.bind(this);
     this.onChangeTotal = this.onChangeTotal.bind(this);
     this.onChangePaidAmount = this.onChangePaidAmount.bind(this);
@@ -91,7 +93,11 @@ export default class CreateInvoice extends Component{
     
     
     // third part events
-    
+    onChangeSubTotal(e){
+      this.setState({
+        subTotal: e.target.value,
+      })
+    }
   
     onChangeTax(e){
       this.setState({
@@ -185,67 +191,57 @@ export default class CreateInvoice extends Component{
   
   
   onSubmit(e){
-    e.preventDefault();  
+  e.preventDefault();  
     
-   // const niceInvoice = require("nice-invoice");
+  // invoice PDF generating code triggered by button
+  
+ /*  const doc= new jsPDF({
+    //orientation: 'landscape',
+    unit: 'in',
+  
+  });
+  
+ 
+  doc.autoTable({ html: '#my-table'})
+ 
+// at least use for loop
+
+this.state.listItem.map(item => (
+  
+
+doc.autoTable({
+  head: [['Product/Service', 'Quantity', 'Unit Cost','Amount' ]],
+  body: [
+    
+    [`${item.value[0]}`, `${item.value[1]}`, `${item.value[2]}`, `${item.value[3]}`],
+    [],[],
+    [ `Sub-Total : ${this.state.subTotal}`],
+    [`Tax Rate : ${this.state.tax}`],
+    [`Total : ${this.state.total}`],
+    [`Amount Paid : ${this.state.amountPaid}`],
+  
    
-    //code
-const invoiceDetail = {
-  shipping: {
-    name: "Micheal",
-    address: "1234 Main Street",
-    city: "Dubai",
-    state: "Dubai",
-    country: "UAE",
-    postal_code: 94111
-  },
-  items: [
-    {
-      item: "Chair",
-      description: "Wooden chair",
-      quantity: 1,
-      price: 50.00, 
-      tax: "10%"
-    },
-    {
-      item: "Watch",
-      description: "Wall watch for office",
-      quantity: 2,
-      price: 30.00,
-      tax: "10%"
-    },
-    {
-      item: "Water Glass Set",
-      description: "Water glass set for office",
-      quantity: 1,
-      price: 35.00,
-      tax: ""
-    }
+
   ],
-  subtotal: 156,
-  total: 156,
-  order_number: 1234222,
-  header:{
-      company_name: "Cyberncode",
-      company_logo: "logo.png",
-      company_address: "Nice Invoice. 123 William Street 1th Floor New York, NY 123456"
-  },
-  footer:{
-    text: "Copyright"
-  },
-  currency_symbol:"$", 
-  date: {
-    billing_date: "08 August 2020",
-    due_date: "10 September 2020",
-  }
+})
+
+  ))
+  
+  //doc.text(`INVOICE # ${this.state.invoiceNumber}`, 0.5, 0.5);
+  //doc.text(`Fro : ${this.state.invoiceFrom}`, 0.5, 0.8);
+  //doc.text(`To : ${this.state.billTo}`, 0.5, 1.1);
+  //doc.text('-----------------------------------------------------------------', 0.5, 1.4);
+  //doc.text(`Date : ${this.state.date}`, 0.5, 1.7);
+  //doc.text(`Payment Mode : ${this.state.paymentMode}`, 0.5, 2.0);
+  //doc.text(`Balance Due : ${this.state.balanceDue}`, 0.5, 2.3);
+  //doc.text(`Due Date : ${this.state.dueDate}`, 0.5, 2.6);
+  //doc.text('-----------------------------------------------------------------', 0.5, 2.9);
+
+  doc.save(`${this.state.billTo} - invoice`);*/
 };
     
 
-    
-    }
-  
-  
-  
+
   render(){
     
     const amounts = this.state.listItem.map( transaction => transaction.value[3]);      
@@ -431,7 +427,7 @@ const invoiceDetail = {
                <div className="col-md-2">
                <p>Sub-total:</p>
                 
-                <p>RWF. {subt}</p>
+                <p value={this.state.subTotal} onChange={this.onChangeSubTotal}>RWF. {subt}</p>
                 
                  
                 
@@ -452,7 +448,7 @@ const invoiceDetail = {
                
                <div className="col-md-3">
                <p>Total:</p>
-                 <p>RWF. { tax }</p>
+                 <p value={this.state.Total} onChange={this.onChangeTotal} >RWF. { tax }</p>
                  
                  
                  <br/>
@@ -470,11 +466,11 @@ const invoiceDetail = {
                
                <div className="col-md-3">
                <p>Balance Due:</p>
-                 <p>RWF. {(tax) - Math.abs(this.state.amountPaid)}</p>
+                 <p value={this.state.balanceDue} onChange={this.onChangeBalanceDue}>RWF. {(tax) - Math.abs(this.state.amountPaid)}</p>
                </div>
                
                </div>
-               <button className="btn btn-outline-primary"> <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+               <button className="btn btn-outline-primary" disabled> <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
   <path fillRule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
   <path fillRule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
 </svg> Download Invoice</button>
@@ -485,24 +481,6 @@ const invoiceDetail = {
              </div>
            
    
-    );
-  }
-}
-
-class Example extends Component {
-  render() {
-    return (
-      <div>
-        <ReactToPrint
-          trigger={() => {
-            // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
-            // to the root node of the returned component as it will be overwritten.
-            return <a href="#">Print this out!</a>;
-          }}
-          content={() => this.componentRef}
-        />
-        <CreateInvoice ref={el => (this.componentRef = el)} />
-      </div>
     );
   }
 }

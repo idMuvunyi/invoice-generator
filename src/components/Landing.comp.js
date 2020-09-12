@@ -16,15 +16,23 @@ export default class LandingPage extends Component{
          </Animate>
          
          <Animate start={{ opacity: 0 }} end={{ opacity: 1 }} sequenceIndex={2}>
-         <p className="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.
-         This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.
-         This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+         <p className="lead">Lorem Ipsum is simply dummy text of the printing 
+         and typesetting industry. Lorem Ipsum has been the industry's standard 
+         dummy text ever since the 1500s, when an unknown printer took a galley 
+         of type and scrambled it to make a type specimen book. It has survived
+          not only five centuries, but also the leap into electronic typesetting,
+           remaining essentially unchanged. It was popularised in the 1960s with 
+           the release of Letraset sheets containing Lorem Ipsum passages, and more recently 
+         with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
          </Animate>
          
          <Animate start={{ opacity: 0 }} end={{ opacity: 1 }} sequenceIndex={1}>
          <hr className="my-4"/>
-         <p>It uses utility classes for typography and spacing to space content out within the larger container.
-         It uses utility classes for typography and spacing to space content out within the larger container.
+         <p>Lorem Ipsum has been the industry's standard dummy 
+           text ever since the 1500s, when an unknown printer took 
+           a galley of type and scrambled it to make a type specimen book.
+            It has survived not only five centuries, but also the leap into 
+            electronic typesetting, remaining essentially unchanged.
          </p>
          </Animate>
          <Animate start={{ opacity: 0 }} end={{ opacity: 1 }} sequenceIndex={3}>
