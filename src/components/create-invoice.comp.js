@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 //import { jsPDF } from "jspdf";
-import 'jspdf-autotable';
+//import 'jspdf-autotable';
 
 
 
