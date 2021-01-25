@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import SubTotale from './subtotal-Text';
-import { jsPDF } from "jspdf";
-import 'jspdf-autotable';
+//import { jsPDF } from "jspdf";
+//import 'jspdf-autotable';
+import easyinvoice from 'easyinvoice';
 
 
 
@@ -185,12 +186,75 @@ export default class CreateInvoice extends Component{
   }
   
   
-  onSubmit(e, sub, tota, baldue){
+  
+  onSubmit(e){
   e.preventDefault();  
  
+
+  let items = {};
+ 
+    this.state.listItem.map(item => {
+      
+  items = {...{"quantity": `${item.value[1]}`,
+      "description": `${item.value[0]}`,
+      "tax": `${this.state.tax}`,
+      "price": `${item.value[2]}`
+     }}
+    
+  });
+  const data = {
+    //"documentTitle": "RECEIPT", //Defaults to INVOICE
+    "currency": "RWF",
+    "taxNotation": "vat", //or gst
+    "marginTop": 25,
+    "marginRight": 25,
+    "marginLeft": 25,
+    "marginBottom": 25,
+    "logo": "https://www.easyinvoice.cloud/img/logo.png", //or base64
+    //"logoExtension": "png", //only when logo is base64
+    "sender": {
+        "company": `${this.state.invoiceFrom}`,
+        "address": `Payment : ${this.state.paymentMode} `,
+        "zip": "",
+        "city": "",
+        "country": ""
+        //"custom1": "custom value 1",
+        //"custom2": "custom value 2",
+        //"custom3": "custom value 3"
+    },
+    "client": {
+         "company": `${this.state.billTo}`,
+         "address": "",
+         "zip": "",
+         "city": "",
+         "country": ""
+        //"custom1": "custom value 1",
+        //"custom2": "custom value 2",
+        //"custom3": "custom value 3"
+    },
+    "invoiceNumber": `${this.state.invoiceNumber}`,
+    "invoiceDate": `${new Date()}`,
+    "products": [ items],
+    "bottomNotice": "Thank you for using our invoices. www.muvunyi.net"
+  };
   
   
-  //invoice PDF generating code triggered by button
+  
+  
+  //Create your invoice! Easy!
+  easyinvoice.createInvoice(data, function (result) {
+    //The response will contain a base64 encoded PDF file
+   // console.log(result.pdf);
+   easyinvoice.download('myInvoice.pdf', result.pdf);
+    
+  });
+  
+  
+  
+  
+  
+  
+ /*  //invoice PDF generating code triggered by button
   
    const doc= new jsPDF({
     //orientation: 'landscape',
@@ -203,18 +267,20 @@ export default class CreateInvoice extends Component{
  
 // at least use for loop
 
-this.state.listItem.map(item => (
-  
+
 
 doc.autoTable({
-  body:[
-    
-
-],
+ 
   head: [[{ content:`INVOICE # ${this.state.invoiceNumber}`, rowSpan: 2 }, 'Product/Service', 'Quantity', 'Unit Cost','Amount' ]],
   body: [
     
-    [{ content:``, rowSpan: 1 }, `${item.value[0]}`, `${item.value[1]}`, `${item.value[2]}`, `${item.value[3]}`],
+    
+   [this.state.listItem.map(item => (
+  
+    { content:``, rowSpan: 1 }, `${item.value[0]}`, `${item.value[1]}`, `${item.value[2]}`, `${item.value[3]}`
+    ))
+   ],
+    
     [{ content:`FROM : ${this.state.invoiceFrom}`, rowSpan: 1}],
     [{ content:`TO : ${this.state.billTo}`, rowSpan: 1}],
     [{ content:`PAYMENT MODE : ${this.state.paymentMode}`, rowSpan: 1}],
@@ -231,14 +297,14 @@ doc.autoTable({
   ],
 })
 
-  ))
+  
   
   
 
   doc.save(`${this.state.billTo} - invoice`);
   
-  
-}
+  */
+} 
 
   
   
@@ -267,7 +333,7 @@ doc.autoTable({
          <h3>Create new invoice</h3>
          <br/>
          
-             <form onSubmit={(e) => this.onSubmit(e, subt, ftotal, balanceDue)}>
+             <form onSubmit={(e) => this.onSubmit(e)}>
              <div className="row">
 
                <div className="col-md-6">
